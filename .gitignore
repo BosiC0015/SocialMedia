@@ -1,0 +1,6 @@
+
+# ignore ini file
+SocialMedia.ini
+
+# mac os files
+.DS_Store
