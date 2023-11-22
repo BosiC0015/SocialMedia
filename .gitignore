@@ -1,6 +1,6 @@
 
 # ignore the private files in nbproject
-*/nbproject/private/
+/nbproject/private/
 
 # ignore ini file
 SocialMedia.ini
