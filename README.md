@@ -2,5 +2,5 @@
 
 Group Members:
 - Bosi Chen
-- 
+- Christine Taguan
 - 
