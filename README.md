@@ -3,4 +3,8 @@
 Group Members:
 - Bosi Chen
 - Christine Taguan
-- P
+- 
+
+# Objecttive
+
+Create a socia media network website for picture album management and sharing.
