@@ -3,7 +3,7 @@
 Group Members:
 - Bosi Chen
 - Christine Taguan
-- 
+- Karen Parsley Hatulan
 
 ## Objective
 
