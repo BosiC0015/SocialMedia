@@ -17,7 +17,6 @@
         $pw = $_POST['pw'];
         $pw2 = $_POST['pw2'];
         $pwHashed = hash("sha256", $pw);
-        $valid = true;
         
         $uidErr = validateUid($uid);
         $nameErr = validateName($name);
@@ -98,11 +97,11 @@
             <?php print $pw2Err; ?>
         </div>
         <!--buttons-->
-        <div class="row mt-4 offset-2">
-            <div class="col-md-2">
+        <div class="row mt-4 offset-1">
+            <div class="col-md-3">
                 <button type="submit" name="btnSubmit" class="btn btn-outline-primary my-2">Submit</button>
             </div>          
-            <div class="col-md-2">
+            <div class="col-md-3">
                 <button type="reset" name="btnClear" class="btn btn-outline-primary my-2">Clear</button>
             </div> 
         </div>
