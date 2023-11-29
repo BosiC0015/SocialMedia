@@ -38,3 +38,15 @@ function validatePwAgain($pw, $pw2) {
     }
     return null;
 }
+
+function validateLoginUId($uid) {
+    if (empty($uid)) {
+        return '<div class="col-md-6 text-danger">User ID cannot be blank</div>';
+    }
+}
+
+function validateLoginPw($pw) {
+    if (empty ($pw)) {
+        return '<div class="col-md-6 text-danger">Password cannot be blank</div>';
+    }
+}
