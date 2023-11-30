@@ -6,7 +6,7 @@ class User {
     private $phone;
     
     public function __construct($uid, $name, $phone) {
-        $this->sid = $uid;
+        $this->uid = $uid;
         $this->name = $name;
         $this->phone = $phone;
     }
@@ -22,5 +22,6 @@ class User {
     public function getPhone() {
         return $this->phone;
     }
+    
 }
 

@@ -10,33 +10,41 @@
         exit();
     }
     
-    if(isset($_POST['btnSubmit'])) {
-        $uid = trim($_POST['uid']);
-        $name = trim($_POST['name']);
-        $phone = trim($_POST['phone']);
-        $pw = $_POST['pw'];
-        $pw2 = $_POST['pw2'];
-        $pwHashed = hash("sha256", $pw);
-        
-        $uidErr = validateUid($uid);
-        $nameErr = validateName($name);
-        $phoneErr = validatePhone($phone);
-        $pwErr = validatePw($pw);
-        $pw2Err = validatePwAgain($pw, $pw2);
+    $uidErr = $nameErr = $phoneErr = $pwErr = $pw2Err = "";
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if(isset($_POST['btnSubmit'])) {
+            $uid = trim($_POST['uid']);
+            $name = trim($_POST['name']);
+            $phone = trim($_POST['phone']);
+            $pw = $_POST['pw'];
+            $pw2 = $_POST['pw2'];
+            $pwHashed = hash("sha256", $pw);
 
-        if (!($uidErr || $nameErr || $phoneErr || $pwErr || $pw2Err)) {
-            try{
-                addUser($uid, $name, $phone, $pwHashed);
-                $_SESSION['user'] = new User($uid, $name, $phone);
+            $uidErr = validateUid($uid);
+            $nameErr = validateName($name);
+            $phoneErr = validatePhone($phone);
+            $pwErr = validatePw($pw);
+            $pw2Err = validatePwAgain($pw, $pw2);
 
-                header("Location: Index.php");
-                exit();
-            } catch (Exception $ex) {
-                die("ERROR!");
+            if (!($uidErr || $nameErr || $phoneErr || $pwErr || $pw2Err)) {
+                try{
+                    addUser($uid, $name, $phone, $pwHashed);
+                    //$_SESSION['user'] = new User($uid, $name, $phone ); 
+
+                    //header("Location: Index.php");
+                    
+                    // need to go to Login page after signup
+                    header("Location: Login.php");
+                    exit();
+                } catch (Exception $ex) {
+                    die("ERROR!");
+                }
             }
+
         }
-        
     }
+    
     
 ?>
 
