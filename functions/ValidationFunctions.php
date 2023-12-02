@@ -1,6 +1,10 @@
 <?php
 
+// Original for MAC
 include_once './DbFunctions.php';
+
+//  Windows
+// include_once '../SocialMedia/functions/DbFunctions.php';
 
 function validateUid($uid) {
     if (empty($uid)) {
