@@ -1,6 +1,10 @@
 <?php
 
+// Original for MAC
 include_once '../EntityClassLib.php';
+
+//  Windows
+//include_once '../SocialMedia/EntityClassLib.php';
 
 function getMyPDO() {
     $config = parse_ini_file("SocialMedia.ini");
@@ -48,3 +52,124 @@ function getUserByIdAndPassword($uid, $pw) {
             throw new Exception("Query failed! SQL statement: $sql");
         }      
     }
+
+function getAllAccessCodes() {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT Accessibility_Code, Description FROM cst8257project.accessibility";
+    $result = $myPdo->query($sql);
+
+    return $result;
+}
+
+function addAlbum($txtTitle, $txtAreaDescription, $uid, $selAccessCode) {
+    $myPdo = getMyPDO();
+
+    $sql = "INSERT INTO cst8257project.album (Title, Description, Owner_Id, Accessibility_Code) "
+            ."VALUES(:txtTitle, :txtAreaDescription, :uid, :selAccessCode)";
+    
+    $statement = $myPdo->prepare($sql);  
+    $statement->execute(['txtTitle' => $txtTitle, 'txtAreaDescription' => $txtAreaDescription,'uid' => $uid, 'selAccessCode' => $selAccessCode]);
+}
+
+function getAlbumsById($uid) {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT Album_Id, Title, Description, Owner_Id, Accessibility_Code "
+            ."FROM cst8257project.album "
+            ."WHERE album.Owner_Id = :uid";
+            
+    $result = $myPdo->prepare($sql);
+    $allAlbums = array();
+    $result->execute(['uid' => $uid]);
+    
+    if ($result) {
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        foreach ($result as $row)
+        {
+            $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
+            $allAlbums[] = $album;
+        }
+        return $allAlbums;
+    } 
+    else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }     
+}
+
+function getDescByAccessCode($ac) {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT Accessibility_Code, Description FROM cst8257project.accessibility "
+            ."WHERE Accessibility_Code = :ac";
+    
+    $result = $myPdo->prepare($sql);
+    $result->execute(['ac' => $ac]);
+    
+    if ($result) {
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        if($row) {
+            return new Accessibility($row['Accessibility_Code'], $row['Description']);
+        } 
+        else {
+            return null;
+        }
+    } 
+    else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }     
+}
+
+function getCtPictures($albumid){
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT Album_Id, COUNT(Picture_Id) AS ctPictures FROM cst8257project.picture "
+            ."WHERE Album_Id = :albumid GROUP BY Album_Id";
+    
+    $result = $myPdo->prepare($sql);
+    $result->execute(['albumid' => $albumid]);
+    
+    if ($result) {
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        if($row){
+            return $row['ctPictures'];
+        } 
+        else {
+            return null;
+        }
+    }
+    else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }     
+}
+
+function saveMyAlbumsChanges($albumid, $accesscode){
+    $myPdo = getMyPDO();
+   
+    $sql = "UPDATE cst8257project.album SET Accessibility_Code=:accesscode "
+            ."WHERE Album_Id = :albumid";
+
+    $resultSet = $myPdo->prepare($sql);
+    $resultSet->execute(['albumid'=> $albumid, 'accesscode'=> $accesscode]);
+}
+
+
+function deletePictures($albumid){
+    $myPdo = getMyPDO();
+    
+    $sql = "DELETE FROM cst8257project.picture WHERE album_id = :albumid";
+   
+    $result = $myPdo->prepare($sql);
+    $result->execute(['albumid'=> $albumid]);
+}
+
+function deleteAlbum($albumid)
+{
+    $myPdo = getMyPDO();
+    
+    $sql = "DELETE FROM cst8257project.album WHERE album_id = :albumid";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['albumid'=> $albumid]);
+}
+
+

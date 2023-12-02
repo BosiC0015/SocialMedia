@@ -5,6 +5,9 @@
     
     session_start();
     
+    // Added for Windows
+    $uid = $pw = $uidErr =  $pwErr = $loginErr = $name = $phone = $pw2 = '';
+    
     if (isset($_SESSION['user'])) {
         header("Location: MyAlbums.php");
         exit();

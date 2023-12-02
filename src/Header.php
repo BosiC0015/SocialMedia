@@ -1,5 +1,5 @@
 <?php
-    session_start();
+//    session_start();
 ?>
 
 <!DOCTYPE html>
@@ -24,7 +24,7 @@
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item mx-2"><a class="nav-link" href="Index.php">Home</a></li>
                     <li class="nav-item mx-2"><a class="nav-link" href="MyFriends.php">My Friends</a></li>
-                    <li class="nav-item mx-2"><a class="nav-link" href="MyAlbums.php">My Albums</a></li>
+                    <li class="nav-item mx-2"><a class="nav-link" href="/SocialMedia/MyAlbums.php">My Albums</a></li>
                     <li class="nav-item mx-2"><a class="nav-link" href="MyPictures.php">My Pictures</a></li>
                     <li class="nav-item mx-2"><a class="nav-link" href="UploadPictures.php">Upload Pictures</a></li>
                     <?php
