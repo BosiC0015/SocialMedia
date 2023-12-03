@@ -79,18 +79,12 @@ function getAlbumsById($uid) {
     $allAlbums = array();
     $result->execute(['uid' => $uid]);
     
-    if ($result) {
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        foreach ($result as $row)
-        {
-            $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
-            $allAlbums[] = $album;
-        }
-        return $allAlbums;
-    } 
-    else {
-        throw new Exception("Query failed! SQL statement: $sql");
-    }     
+    foreach ($result as $row)
+    {
+        $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
+        $allAlbums[] = $album;
+    }
+    return $allAlbums;
 }
 
 function getDescByAccessCode($ac) {
