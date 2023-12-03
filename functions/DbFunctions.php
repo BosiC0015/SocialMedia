@@ -15,14 +15,16 @@ function getMyPDO() {
 function userIdExists($uid) {
     $myPdo = getMyPDO();
 
-    $sql = "SELECT UserId FROM user WHERE UserId = :uid";
+    $sql = "SELECT UserId, Name, Phone FROM user WHERE UserId = :uid";
     $result = $myPdo->prepare($sql);
     $result->execute(['uid' => $uid]);
-
     $row = $result->fetch(PDO::FETCH_ASSOC);
+
     if ($row) {
         return new User($row['UserId'], $row['Name'], $row['Phone']);
-    } 
+         
+    }
+    
     return null;
 }
 
@@ -40,17 +42,11 @@ function getUserByIdAndPassword($uid, $pw) {
         $sql = "SELECT UserId, Name, Phone FROM user WHERE UserId = :uid AND Password = :pw";
         $result = $myPdo->prepare($sql);
         $result->execute(['uid' => $uid, 'pw' => $pw]);
-        
-        if ($result) {
-            $row = $result->fetch(PDO::FETCH_ASSOC);
-            if ($row) {
-                return new User($row['UserId'], $row['Name'], $row['Phone']);
-            } else {
-                return null;
-            }
-        } else {
-            throw new Exception("Query failed! SQL statement: $sql");
-        }      
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new User($row['UserId'], $row['Name'], $row['Phone']);
+        }   
+        return null;
     }
 
 function getAllAccessCodes() {
@@ -172,4 +168,84 @@ function deleteAlbum($albumid)
     $result->execute(['albumid'=> $albumid]);
 }
 
+function getFriendsList($userId)
+{
+    $myPdo = getMyPDO();
+    
+    $sql1 = "SELECT Friend_RequesteeId FROM Friendship "
+            . "WHERE Friend_RequesterId = :userId AND Status = 'accepted'";
+    
+    $result1 = $myPdo->prepare($sql1);
+    $result1->execute(['userId' => $userId]);
+    
+    $friendList1Arr = array();
+    
+    foreach ($result1 as $row)
+    {
+         $friendList1 = new Friendship($row['Friend_RequesteeId']);
+         $friendList1Arr[] = $friendList1;
+    }
+    
+    
+    $sql2 = "SELECT Friend_RequesterId FROM Friendship "
+            . "WHERE Friend_RequesteeId = :userId AND Status = 'accepted'";
+    
+    $result2 = $myPdo->prepare($sql2);
+    $result2->execute(['userId' => $userId]);
+    
+    $friendList2Arr = array();
+    foreach ($result2 as $row)
+    {
+         $friendList2 = new Friendship($row['Friend_RequesterId']);
+         $friendList2Arr[] = $friendList2;
+    }
+    
+    $friendsList = array_merge($friendList1Arr, $friendList2Arr);
+    
+    return $friendsList;
+    
+    
+}
+
+function getFriendRequestersFor($userId) {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT Friend_RequesterId FROM Friendship "
+            . "WHERE Friend_RequesteeId = :userId AND Status = 'request'";
+    
+    $result = $myPdo->prepare($sql);
+    $result->execute(['userId' => $userId]);
+    $friendRequesterListArr = array();
+    
+    foreach ($result as $row)
+    {
+         $friendRequesterList = new Friendship($row['Friend_RequesterId']);
+         $friendRequesterListArr[] = $friendRequesterList;
+    }
+    return $friendRequesterListArr;
+    
+    
+}
+
+function acceptFriendRequest($userId, $requesterId) {
+    $myPdo = getMyPDO();
+    
+    $sql = "UPDATE Friendship SET Status = 'accepted' WHERE Friend_RequesterId = :requesterId AND Friend_RequesteeId = :userId";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['requesterId' => $requesterId, 'userId' => $userId]);
+    
+}
+
+function sendFriendRequest($requesterId, $requesteeId) {
+    $myPdo = getMyPDO();
+    
+    $sql = "INSERT INTO Friendship VALUES("
+           . "(SELECT UserId FROM user WHERE UserId = :requesterId),"
+           . "(SELECT UserId FROM user WHERE UserId = :requesteeId),"
+           . "(SELECT Status_Code FROM friendshipstatus WHERE Status_Code = 'request'))";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['requesterId' => $requesterId, 'requesteeId' => $requesteeId]);
+
+    
+}
 
