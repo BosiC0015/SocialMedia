@@ -97,7 +97,7 @@
                                     <td scope="row" class="col-sm-2">
                                         <div class="col-sm-2 offset-sm-3">
                                             <a href="/SocialMedia/MyAlbums.php?aid={$album->getAlbumId()}" class="btn btn-link" role="button" onclick="return confirm('The selected album will be deleted!'); return false;">Delete</a>
-                                            <!-- <input type="submit" name="SubmitDelete" class="btn btn-link" value="Delete" onclick="return confirm('The selected album will be deleted!'); return false;"></input> -->
+                                            <!-- <input type="submit" name="SubmitDelete" class="btn btn-link" value="Delete" onclick="return confirm('The selected album together with all the pictures will be deleted!'); return false;"></input> -->
 
                                         </div>
                                     </td>
