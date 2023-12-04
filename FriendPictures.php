@@ -12,14 +12,22 @@
         exit();
     }
     
+    if(isset($_GET['fId'])) 
+    {
+        $fId = $_GET['fId'];
+        $friendSharingAlbum = userIdExists($fId);
+        $friendName = $friendSharingAlbum->getName();
+    }
+    
     $user = $_SESSION['user'];
     $uid = $user->getUserId();
+    
     
     $albumErr = "";
     $commentErr = "";
     
     // get shared albums by user
-    $albumsArr = getSharedAlbums($uid);
+    $albumsArr = getSharedAlbums($fId);
     $selectedAId = "";
     $selectedFriendName = "";
     $displayPic = null;
@@ -90,7 +98,7 @@
 
 <?php include_once './src/Header.php'; ?>
 <main class="container m-5">
-    <h1 class="text-center"><?php print $selectedFriendName . "'s"; ?> Shared Pictures</h1>
+    <h1 class="text-center"><?php print $friendName . "'s"; ?> Shared Pictures</h1>
     <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>" class="d-flex flex-column align-items-center">
         <!--select album part-->
         <div class="col-md-10 mb-3">

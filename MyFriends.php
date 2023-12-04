@@ -24,6 +24,7 @@
     // get list of friend requests
     $friendRequests = getFriendRequestersFor($user->getUserId());
     
+    
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (isset($_POST["btnSubmitDefriend"])) {
             $defriendSelected = $_POST["defriendSelected"];
@@ -103,7 +104,7 @@
                                 $aFriend = userIdExists($aId);
                                 $sharedAlbums = getSharedAlbums($aId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td><a href='FriendPictures.php'>".$aFriend->getName()."</a></th>";
+                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fId=".$aId."'>".$aFriend->getName()."</a></th>";
                                     echo "<td>".count($sharedAlbums)."</td>";
                                     echo "<td><input type='checkbox' name='defriendSelected[]' value='$aId'/></td>";
                                 echo "</tr>";
@@ -116,7 +117,7 @@
                                 $bFriend = userIdExists($bId);
                                 $sharedAlbums = getSharedAlbums($bId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td><a href='FriendPictures.php'>".$bFriend->getName()."</a></td>";
+                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fid=".$bId."'>".$aFriend->getName()."</a></th>";
                                     echo "<td>".count($sharedAlbums)."</td>";
                                     echo "<td><input type='checkbox' name='defriendSelected[]' value='$bId'/></td>";
                                 echo "</tr>";
@@ -135,7 +136,7 @@
         
         <div class="row">
             <div class="col-sm-2 offset-sm-8">
-                <button type="submit" name="btnSubmitDefriend" class="btn btn-outline-primary my-2">Defriend Selected</button>
+                <button type="submit" name="btnSubmitDefriend" class="btn btn-outline-primary my-2" onclick="return confirm('The selected friends will be defriended!')">Defriend Selected</button>
             </div>
             
             
