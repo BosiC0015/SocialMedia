@@ -115,7 +115,7 @@
         <!--display pictures part-->
         <div>
             <!--large picture-->
-            <div class="d-flex flex-column justify-content-center align-items-center">
+            <div>
                 <?php
                     if ($displayPic == null) {
                         print "<h5 class=\"text-danger\">Your album is empty</h5>";
@@ -125,20 +125,49 @@
                         $displayDesc = $displayPic->getDescription();
                         $displayPId = $displayPic->getPictureId();
                         
-                        // show comments
-                        $commentsArr = getCommentsForPic($displayPId);
-
                         print <<<image
                             <h3 class="text-center">$displayTitle</h3>
                             <div class="d-flex flex-row">
                                 <div class="col-md-9">
-                                    <img src="./images/$displayFileName" alt="$displayTitle" class="mw-100 mh-100" />    
+                                    <img src="./images/$displayFileName" alt="$displayTitle" class="mw-100 mh-100" />
+                                    <!--thumbnails-->
+                                    <div class="d-flex align-items-center overflow-x-auto" id="thumbnails">
+                        image;
+                        
+                        
+                                        foreach ($picturesArr as $pic) {       
+
+                                            $picThumbnail = $pic->getFileName();
+                                            $picTitle = $pic->getTitle();
+                                            $picId = $pic->getPictureId();                    
+
+                                            if ($displayPic->getPictureId() == $picId) {
+                                                print <<<thumbnail
+                                                    <label class="border border-3 border-primary">
+                                                        <input type="radio" name="selectedPic" value="$picId" class="d-none" checked /> 
+                                                        <img src="./thumbnail_imgs/$picThumbnail" alt="$picTitle" id="$picId" />
+                                                    </label>
+                                                thumbnail;
+                                            } else {
+                                                print <<<thumbnail
+                                                    <label class="border border-3">
+                                                        <input type="radio" name="selectedPic" value="$picId" class="d-none" checked /> 
+                                                        <img src="./thumbnail_imgs/$picThumbnail" alt="$picTitle" id="$picId" />
+                                                    </label>
+                                                thumbnail;
+                                            }
+                                        }
+                        print <<<closing
+                                    </div>
                                 </div>
                                 <div class="col-md-2 offset-1">
                                     <h5>Description: </h5>
                                     <p>$displayDesc</p>
                                     <h5>Comments: </h5>
-                        image;
+                        closing;
+                        
+                        // show comments
+                        $commentsArr = getCommentsForPic($displayPId);
                         
                         foreach ($commentsArr as $comment) {
                             $author = $comment->getAuthorName();
@@ -164,33 +193,6 @@
                         closing;
                     }
                 ?>
-            </div>
-            <!--thumbnails-->
-            <div class="d-flex align-items-center overflow-x-auto" id="thumbnails">
-            <?php
-                foreach ($picturesArr as $pic) {       
-                  
-                    $picThumbnail = $pic->getFileName();
-                    $picTitle = $pic->getTitle();
-                    $picId = $pic->getPictureId();                    
-                    
-                    if ($displayPic->getPictureId() == $picId) {
-                        print <<<thumbnail
-                            <label class="border border-3 border-warning">
-                                <input type="radio" name="selectedPic" value="$picId" class="d-none" checked /> 
-                                <img src="./thumbnail_imgs/$picThumbnail" alt="$picTitle" id="$picId" />
-                            </label>
-                        thumbnail;           
-                    } else {
-                        print <<<thumbnail
-                            <label class="border border-3">
-                                <input type="radio" name="selectedPic" value="$picId" class="d-none" checked /> 
-                                <img src="./thumbnail_imgs/$picThumbnail" alt="$picTitle" id="$picId" />
-                            </label>
-                        thumbnail;
-                    }
-                }
-            ?>
             </div>
             <div>
                 <button type="submit" name="btnPic" id="select-picture" class="d-none"></button>
