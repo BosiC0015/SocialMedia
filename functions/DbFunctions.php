@@ -7,17 +7,17 @@ include_once '../EntityClassLib.php';
 //include_once '../SocialMedia/EntityClassLib.php';
 
 function getMyPDO() {
-//    $config = parse_ini_file("SocialMedia.ini");
-//    extract($config);
-//    return new PDO($dsn, $scriptUser, $scriptPassword);
+    $config = parse_ini_file("SocialMedia.ini");
+    extract($config);
+    return new PDO($dsn, $scriptUser, $scriptPassword);
     
 //    Special for Bosi😂
-    $config = parse_ini_file("SocialMedia.ini", true);
-    $dbConfig = $config['database'];
-
-    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};port={$dbConfig['port']};charset=utf8";
-    $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
-    return $pdo;
+//    $config = parse_ini_file("SocialMedia.ini", true);
+//    $dbConfig = $config['database'];
+//
+//    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};port={$dbConfig['port']};charset=utf8";
+//    $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
+//    return $pdo;
 }
 
 function userIdExists($uid) {

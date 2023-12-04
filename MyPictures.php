@@ -65,16 +65,24 @@
         $displayPic = $_SESSION['displayPic'];
     } else {
         $displayPic = $picturesArr[0];
-        $_SESSION['displayPic'] = $displayPic;
+        $_SESSION['displayPic'] = $picturesArr[0];
     }
     
-    if (isset($_POST['selectedPic'])) {
-        if ($_SESSION['displayPic'] != null) {
-            $pid = $_POST['selectedPic'];
-            $displayPic = getPictureById($pid);
-            $_SESSION['displayPic'] = $displayPic;
+    if (isset($_POST['btnPic'])) {
+        if (isset($_SESSION['displayPic'])) {
+        $displayPic = $_SESSION['displayPic'];
+    } else {
+        $displayPic = $picturesArr[0];
+        $_SESSION['displayPic'] = $picturesArr[0];
+    }
+        if (isset($_POST['selectedPic'])) {
+            if ($_SESSION['displayPic'] != null) {
+                $pid = $_POST['selectedPic'];
+                $displayPic = getPictureById($pid);
+                $_SESSION['displayPic'] = $displayPic;
+            }
         }
-    } 
+    }
     
 ?>
 
