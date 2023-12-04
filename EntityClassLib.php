@@ -159,3 +159,19 @@ class Comment {
         return $this->commentText;
     }
 }
+
+class Friendship {
+    public $FriendsId;
+    
+    public function __construct($FriendsId) {
+        $this->FriendsId = $FriendsId;
+        
+    }
+    
+    public function getFriendsId()
+    {
+        return $this->FriendsId;
+    }
+    
+}
+
