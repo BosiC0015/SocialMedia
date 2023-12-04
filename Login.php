@@ -32,9 +32,33 @@
                 $loginErr = '<div class="row mt-3 d-flex align-items-center text-danger">Incorrect user ID and / or password</div>';
             } else {
                 $_SESSION['user'] = $user;
-
-                header("Location: MyAlbums.php");
-                exit();
+                
+                switch ($_SESSION['page']) {
+                    case "addAlbum":
+                        header("Location: AddAlbum.php");
+                        exit();
+                    case "addFriend":
+                        header("Location: AddFriend.php");
+                        exit();
+                    case "friendPictures":
+                        header("Location: FriendPictures.php");
+                        exit();
+                    case "myAlbums":
+                        header("Location: MyAlbums.php");
+                        exit();
+                    case "myFriends":
+                        header("Location: MyFriends.php");
+                        exit();
+                    case "myPictures":
+                        header("Location: MyPictures.php");
+                        exit();
+                    case "uploadPictures":
+                        header("Location: UploadPictures.php");
+                        exit();
+                    default:
+                        header("Location: MyAlbums.php");
+                        exit();
+                }
             }
         }
     }

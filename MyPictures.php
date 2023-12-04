@@ -8,19 +8,29 @@
     
     if (!isset($_SESSION['user']))
     {
-        header("Location: Index.php");
+        $_SESSION['page'] = "myPictures";
+        header("Location: Login.php");
         exit();
     }
     
     $user = $_SESSION['user'];
     $uid = $user->getUserId();
-    
+
     $albumErr = "";
     $commentErr = "";
     
+     // get album id from query string
+    if(isset($_GET['aid'])) 
+    {
+        $selectedAId = $_GET['aid'];
+        $_SESSION['aid'] = $_GET['aid'];
+    } else {
+        header("Location: MyAlbums.php");
+        exit();
+    }
+    
     // get albums by user
     $albumsArr = getAlbumsById($uid);
-    $selectedAId = "";
     $displayPic = null;
     
     // select album
@@ -55,7 +65,7 @@
         
         if (empty($commentErr)) {
             addComment($uid, $pictureId, $commentText);
-            header("Location: MyPictures.php");
+            header("Location: MyPictures.php?aid=$selectedAId");
             exit();
         }
     }
@@ -89,7 +99,7 @@
 <?php include_once './src/Header.php'; ?>
 <main class="container m-5">
     <h1 class="text-center">My Pictures</h1>
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>" class="d-flex flex-column align-items-center">
+    <form method="post" action="MyPictures.php?aid=<?php print $selectedAId; ?>" class="md-col-10">
         <!--select album part-->
         <div class="col-md-10 mb-3">
             <select name="album" id="album-list" class="form-control">

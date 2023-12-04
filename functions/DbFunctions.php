@@ -155,14 +155,13 @@ function saveMyAlbumsChanges($albumid, $accesscode){
     $resultSet->execute(['albumid'=> $albumid, 'accesscode'=> $accesscode]);
 }
 
-
-function deletePictures($albumid){
+function deletePicture($pid) {
     $myPdo = getMyPDO();
     
-    $sql = "DELETE FROM cst8257project.picture WHERE album_id = :albumid";
-   
+    $sql = "DELETE FROM Comment WHERE Picture_Id = :pid;"
+            . "DELETE FROM Picture WHERE Picture_Id = :pid";
     $result = $myPdo->prepare($sql);
-    $result->execute(['albumid'=> $albumid]);
+    $result->execute(['pid'=> $pid]);
 }
 
 function deleteAlbum($albumid)
@@ -341,7 +340,7 @@ function addComment($uid, $pid, $commentText) {
     $statement->execute(['uid' => $uid, 'pid' => $pid, 'text' => $commentText]);
 }
 
-function getSharedAlbums($uid) {
+function getAlbumsSharedFrom($uid) {
     $myPdo = getMyPDO();
     
     $sql = "SELECT 
@@ -349,21 +348,10 @@ function getSharedAlbums($uid) {
             FROM
                 album
             WHERE
-                (Owner_Id = (SELECT 
-                        Friend_RequesteeId
-                    FROM
-                        friendship
-                    WHERE
-                        Friend_RequesterId = :uid)
-                    OR Owner_Id = (SELECT 
-                        Friend_RequesterId
-                    FROM
-                        friendship
-                    WHERE
-                        Friend_RequesteeId = :uid))
-                    AND Accessibility_Code = 'shared';";
+                Owner_Id = :uid
+                AND Accessibility_Code = 'shared'";
             
-    $result = $myPdo->prepare($sql);
+    $result = $myPdo->prepare($sql);  
     $allAlbums = array();
     $result->execute(['uid' => $uid]);
     

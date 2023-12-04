@@ -1,13 +1,13 @@
 <?php
 
-function save_uploaded_file($destinationPath)
+function save_uploaded_file($destinationPath, $n)
 {
     if (!file_exists($destinationPath)) {
         mkdir($destinationPath);
     }
-
-    $tempFilePath = $_FILES['upload']['tmp_name'];
-    $filePath = $destinationPath."/".$_FILES['upload']['name'];
+    
+    $tempFilePath = $_FILES['upload']['tmp_name'][$n];
+    $filePath = $destinationPath."/".$_FILES['upload']['name'][$n];
 
     $pathInfo = pathinfo($filePath);
     $dir = $pathInfo['dirname'];

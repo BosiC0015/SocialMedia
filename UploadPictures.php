@@ -9,7 +9,8 @@
     session_start();
     
     if (!isset($_SESSION['user'])) {
-        header("Location: Index.php");
+        $_SESSION['page'] = "uploadPictures";
+        header("Location: Login.php");
         exit();
     }
     
@@ -35,36 +36,39 @@
 
     if (isset($_POST['btnUpload'])) {
         $albumId = $_POST['uploadAlbum'];
-        $imgName = $_FILES['upload']['name'];
         $title = trim($_POST['title']);
         $desc = trim($_POST['desc']);
         
-        if ($_FILES['upload']['error'] == 0) {
-            $filePath = save_uploaded_file(ORIGINAL_IMAGE_DESTINATION);
+        $uploadCount = count($_FILES['upload']['name']);
+        for ($n = 0; $n < $uploadCount; $n++) {
+            $imgName = $_FILES['upload']['name'][$n];
+            if ($_FILES['upload']['error'][$n] == 0) {
+                $filePath = save_uploaded_file(ORIGINAL_IMAGE_DESTINATION, $n);
 
-            $imageDetails = getimagesize($filePath);
+                $imageDetails = getimagesize($filePath);
 
-            if ($imageDetails && in_array($imageDetails[2], $supportedImageTypes)) {
-                resamplePicture($filePath, IMAGE_DESTINATION, IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
-                resamplePicture($filePath, THUMB_DESTINATION, THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT);
-                
-                // update database
-                addPictures($albumId, $imgName, $title, $desc);
+                if ($imageDetails && in_array($imageDetails[2], $supportedImageTypes)) {
+                    resamplePicture($filePath, IMAGE_DESTINATION, IMAGE_MAX_WIDTH, IMAGE_MAX_HEIGHT);
+                    resamplePicture($filePath, THUMB_DESTINATION, THUMB_MAX_WIDTH, THUMB_MAX_HEIGHT);
+
+                    // update database
+                    addPictures($albumId, $imgName, $title, $desc);
+                }
+                else {
+                    $error = "Uploaded file is not a supported type"; 
+                    unlink($filePath);
+                }
+            }
+            elseif ($_FILES['upload']['error'][$n] == 1) {
+                $error = "Upload file is too large"; 
+            }
+            elseif ($_FILES['upload']['error'][$n] == 4) {
+                $error = "No upload file specified"; 
             }
             else {
-                $error = "Uploaded file is not a supported type"; 
-                unlink($filePath);
+                $error  = "Error happened while uploading the file. Try again late"; 
             }
         }
-        elseif ($_FILES['upload']['error'] == 1) {
-            $error = "Upload file is too large"; 
-	}
-	elseif ($_FILES['upload']['error'] == 4) {
-            $error = "No upload file specified"; 
-	}
-	else {
-            $error  = "Error happened while uploading the file. Try again late"; 
-	}
     }
     
 ?>
@@ -99,7 +103,7 @@
                 <label class="form-label fw-semibold">File to Upload:</label>
             </div>
             <div class="col-md-4"> 
-              <input type="file" name="upload" id= "upload" class="form-control"/>
+                <input type="file" name="upload[]" id= "upload" class="form-control" multiple />
             </div> 
         </div>
         <div class="row form-group my-3">
