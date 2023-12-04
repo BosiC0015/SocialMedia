@@ -39,23 +39,77 @@
                 if ($friend == null) {
                     $friendIdErr = "The ID you entered does not exist.";
                 } else {
-                    // check if there is a pending friend request from entered ID to user
+                    
+                    // get list of pending friend request of user
                     $fId = $friend->getUserId();
                     $friendIdErr = "You sent friend request for ".$friend->getName();
                     $friendRequesters = getFriendRequestersFor($userId);
-                    $friendIdErr = $friendIdErr.".<br/>".$friend->getName()." has ".count($friendRequesters)." friend requests.";
+                    $friendIdErr = $friendIdErr.".<br/>You have ".count($friendRequesters)." friend requests.";
                     
-                    if ($friendRequesters > 0 && in_array($friendRequesters, $fId)) {
-                        acceptFriendRequest($userId, $fId);
-                        $friendRequestConfirmMsg = "You and ".$friend->getName()."are now friends.<br />"
-                                . "You are now able to view each others shared albums.";
-                        $friendId = "";
-                    } else {
+                    // get list of friends of user
+                    
+                    $friends = array();
+                    
+                    $friendRequestsReceivedAccepted = getFriendRequestsReceivedAccepted($userId, "accepted");
+                    if (!empty($friendRequestsReceivedAccepted)) { array_push($friends, $friendRequestsReceivedAccepted); }
+                    
+                    $friendRequestsSentAccepted = getFriendRequestsSentAccepted($userId, "accepted");
+                    if (!empty($friendRequestsSentAccepted)) { array_push($friends, $friendRequestsSentAccepted); }
+                    
+                    $statusSet = false;
+                    
+                    $friendIdErr = $friendIdErr."<br/>You have ".count($friends)." friends.";
+                    
+                    if (count($friendRequesters) > 0) {
+                        // check if there is a pending friend request from entered ID to user
+                        for($i=0; $i<count($friendRequesters); $i++) {
+                            if (strcmp($friendRequesters[$i]->getFriend_RequesterId(), $fId) == 0) {
+                                acceptFriendRequest($userId, $fId);
+                                $friendRequestConfirmMsg = "You and ".$friend->getName()."are now friends.<br />"
+                                        . "You are now able to view each others shared albums.";
+                                $friendId = "";
+                                $statusSet = true;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // check if entered ID is already friends with user
+                    if (!$statusSet && count($friends) > 0) {
+                        $friendIdErr = $friendIdErr."<br/>DEBUG HERE...";
+                        if (count($friendRequestsReceivedAccepted) > 0) {
+                            foreach($friendRequestsReceivedAccepted as $a) {
+                                if (strcmp($a->getFriend_RequesterId(), $fId) == 0) {
+                                    $friendRequestConfirmMsg = "You and ".$friend->getName()."(friend requester) are already friends.<br />"
+                                            . "You are able to view each others shared albums.";
+                                    $friendId = "";
+                                    $statusSet = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!$statusSet && count($friendRequestsSentAccepted) > 0) {
+                            foreach ($friendRequestsSentAccepted as $b) {
+                                if (strcmp($b->getFriend_RequesteeId(), $fId) == 0) {
+                                    $friendRequestConfirmMsg = "You (requester) and ".$friend->getName()." are already friends.<br />"
+                                            . "You are able to view each others shared albums.";
+                                    $friendId = "";
+                                    $statusSet = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
+                    }
+                    
+                    if (!$statusSet) {
                         sendFriendRequest($userId, $fId);
                         $friendRequestConfirmMsg = "Your request has been sent to ".$friend->getName()." (ID: ".$fId." ).<br />"
                                 . "Once ".$friend->getName()." accepts your request, you and ".$friend->getName()."<br />"
                                 . "will be friends and be able to view each others shared albums.";
                         $friendId = "";
+                        $statusSet = true;
                     }
                 }    
             }
