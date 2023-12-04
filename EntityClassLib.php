@@ -2,7 +2,7 @@
 
 class User {
     private $uid;
-    private  $name;
+    private $name;
     private $phone;
     
     public function __construct($uid, $name, $phone) {
@@ -122,7 +122,7 @@ class Picture {
    
     public function getFileName() 
     {
-        return $this->Title;
+        return $this->File_Name;
     }
     
     public function getOwnerId() 
@@ -136,3 +136,26 @@ class Picture {
     }
 }
 
+class Comment {
+    private $authorName;
+    private $pictureId;
+    private $commentText;
+    
+    public function __construct($authorName, $pictureId, $commentText) {
+        $this->authorName = $authorName;
+        $this->pictureId = $pictureId;
+        $this->commentText = $commentText;
+    }
+    
+    public function getAuthorName() {
+        return $this->authorName;
+    }
+    
+    public function getPictureId() {
+        return $this->pictureId;
+    }
+    
+    public function getCommentText() {
+        return $this->commentText;
+    }
+}
