@@ -9,6 +9,9 @@ SocialMedia.ini
 .DS_Store
 
 # ignore folders
+/original_pics
+/images
+/thumbnail_imgs
 
 # ignore files
 

@@ -7,9 +7,17 @@ include_once '../EntityClassLib.php';
 //include_once '../SocialMedia/EntityClassLib.php';
 
 function getMyPDO() {
-    $config = parse_ini_file("SocialMedia.ini");
-    extract($config);
-    return new PDO($dsn, $scriptUser, $scriptPassword);
+//    $config = parse_ini_file("SocialMedia.ini");
+//    extract($config);
+//    return new PDO($dsn, $scriptUser, $scriptPassword);
+    
+//    Special for Bosi😂
+    $config = parse_ini_file("SocialMedia.ini", true);
+    $dbConfig = $config['database'];
+
+    $dsn = "mysql:host={$dbConfig['host']};dbname={$dbConfig['dbname']};port={$dbConfig['port']};charset=utf8";
+    $pdo = new PDO($dsn, $dbConfig['user'], $dbConfig['password']);
+    return $pdo;
 }
 
 function userIdExists($uid) {
@@ -79,12 +87,16 @@ function getAlbumsById($uid) {
     $allAlbums = array();
     $result->execute(['uid' => $uid]);
     
-    foreach ($result as $row)
-    {
-        $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
-        $allAlbums[] = $album;
+    if ($result) {
+        foreach ($result as $row)
+        {
+            $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
+            $allAlbums[] = $album;
+        }
+        return $allAlbums;
+    } else {
+        throw new Exception("Query failed! SQL statement: $sql");
     }
-    return $allAlbums;
 }
 
 function getDescByAccessCode($ac) {
@@ -161,6 +173,33 @@ function deleteAlbum($albumid)
     $result = $myPdo->prepare($sql);
     $result->execute(['albumid'=> $albumid]);
 }
+
+function addPictures($aid, $filePath, $title, $desc) {
+    $myPdo = getMyPDO();
+    
+    $sql = "INSERT INTO picture (Album_Id, File_Name, Title, Description) VALUES (:aid, :filePath, :title, :desc)";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['aid' => $aid, 'filePath' => $filePath, 'title' => $title, 'desc' => $desc]);
+}
+
+function getPicturesInAlbum($aid) {
+    $myPdo = getMyPDO();
+    $picsArr = array();
+    
+    $sql = "SELECT * FROM picture WHERE Album_Id = :aid";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['aid' => $aid]);
+    
+    if ($result) {
+        foreach ($result as $row)
+        {
+            $pic = new Picture($row['Picture_Id'], $row['Album_Id'], $row['Title'], $row['File_Name'], $row['Owner_Id'], $row['Description']);
+            $picsArr[] = $pic;
+        }
+        return $picsArr;
+    } else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }
 
 function getFriendsList($userId)
 {
@@ -240,6 +279,58 @@ function sendFriendRequest($requesterId, $requesteeId) {
     $result = $myPdo->prepare($sql);
     $result->execute(['requesterId' => $requesterId, 'requesteeId' => $requesteeId]);
 
-    
 }
 
+function getPictureById($pid) {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT * FROM picture WHERE Picture_Id = :pid";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['pid' => $pid]);
+    
+    if ($result) {
+        $row = $result->fetch(PDO::FETCH_ASSOC);
+        if ($row) {
+            return new Picture($row['Picture_Id'], $row['Album_Id'], $row['Title'], $row['File_Name'], $row['Owner_Id'], $row['Description']);
+        } else {
+            return null;
+        }
+    } else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }
+}
+
+function getCommentsForPic($pid) {
+    $myPdo = getMyPDO();
+    $commentsArr = array();
+    
+    $sql = "SELECT 
+                Comment_Id, Comment_Text, UserId, Name
+            FROM
+                Comment
+                    INNER JOIN
+                User ON Comment.Author_Id = User.UserId
+            WHERE
+                Picture_Id = :pid";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['pid' => $pid]);
+    
+    if ($result) {
+        foreach ($result as $row)
+        {
+            $comment = new Comment($row['Name'], $pid, $row['Comment_Text']);
+            $commentsArr[] = $comment;
+        }
+        return $commentsArr;
+    } else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }
+}
+
+function addComment($uid, $pid, $commentText) {
+    $myPdo = getMyPDO();
+
+    $sql = "INSERT INTO comment (Author_Id, Picture_Id, Comment_Text) values (:uid, :pid, :text);";
+    $statement = $myPdo->prepare($sql);  
+    $statement->execute(['uid' => $uid, 'pid' => $pid, 'text' => $commentText]);
+}
