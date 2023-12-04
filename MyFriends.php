@@ -37,8 +37,6 @@
 <main class="container m-5">
     <h1 class="text-center">My Friends</h1>
     <p>Welcome <b><?php echo $user->getName() ?></b>! (not you? Change User <a href='Logout.php'>here</a>)</p>  
-    <p><?php echo "Friend requests received: ".count($friendRequestsReceivedAccepted) ?></p>
-    <p><?php echo "Friend requests sent: ".count($friendRequestsSentAccepted) ?></p>
     
     <form name="formFriendsList" id="formFriendsList" method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
         <div class="row">

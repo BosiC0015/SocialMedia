@@ -42,9 +42,9 @@
                     
                     // get list of pending friend request of user
                     $fId = $friend->getUserId();
-                    $friendIdErr = "You sent friend request for ".$friend->getName();
+                    
                     $friendRequesters = getFriendRequestersFor($userId);
-                    $friendIdErr = $friendIdErr.".<br/>You have ".count($friendRequesters)." friend requests.";
+                    
                     
                     // get list of friends of user
                     
