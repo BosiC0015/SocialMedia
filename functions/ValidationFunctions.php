@@ -54,3 +54,16 @@ function validateLoginPw($pw) {
         return '<div class="col-md-6 text-danger">Password cannot be blank</div>';
     }
 }
+
+function validateAlbum($aid) {
+    if ($aid == "-1") {
+        return '<div class="col-md-6 text-danger">You need to select an album</div>';
+    }
+    return null;
+}
+
+function validateCommentText($text) {
+    if (empty($text)) {
+        return '<div class="col-md-6 text-danger">Comment cannot be blank</div>';
+    }
+}
