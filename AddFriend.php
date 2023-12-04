@@ -58,7 +58,7 @@
                     
                     $statusSet = false;
                     
-                    $friendIdErr = $friendIdErr."<br/>You have ".count($friends)." friends.";
+                    
                     
                     if (count($friendRequesters) > 0) {
                         // check if there is a pending friend request from entered ID to user

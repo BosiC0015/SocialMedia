@@ -25,7 +25,44 @@
     $friendRequests = getFriendRequestersFor($user->getUserId());
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_POST["btnSubmitDefriend"])) {
+            $defriendSelected = $_POST["defriendSelected"];
+            if (count($defriendSelected) > 0) {
+                foreach($defriendSelected as $friendId) {
+                    deleteFriend($userId, $friendId);
+                }
+                
+            }
+        }
         
+        if (isset($_POST["btnSubmitAccept"])) {
+            $requestsSelected = $_POST["requestsSelected"];
+            if (count($requestsSelected) > 0) {
+                foreach($requestsSelected as $requestFriendId) {
+                    acceptFriendRequest($userId, $requestFriendId);
+                }
+                
+            }
+        }
+        
+        if (isset($_POST["btnSubmitDeny"])) {
+            $requestsSelected = $_POST["requestsSelected"];
+            if (count($requestsSelected) > 0) {
+                foreach($requestsSelected as $requestFriendId) {
+                    denyFriendRequest($userId, $requestFriendId);
+                }
+                
+            }
+        }
+        
+        // get list of friends of user
+        $friendsList = array();
+
+        $friendRequestsReceivedAccepted = getFriendRequestsReceivedAccepted($user->getUserId(), "accepted");
+        $friendRequestsSentAccepted = getFriendRequestsSentAccepted($user->getUserId(), "accepted");
+
+        // get list of friend requests
+        $friendRequests = getFriendRequestersFor($user->getUserId());
     }
     
     
@@ -64,10 +101,11 @@
                             foreach($friendRequestsReceivedAccepted as $a) {
                                 $aId = $a->getFriend_RequesterId();
                                 $aFriend = userIdExists($aId);
+                                $sharedAlbums = getSharedAlbums($aId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td>".$aFriend->getName()."</th>";
-                                    echo "<td></td>";
-                                    echo "<td></td>";
+                                    echo "<td><a href='FriendPictures.php'>".$aFriend->getName()."</a></th>";
+                                    echo "<td>".count($sharedAlbums)."</td>";
+                                    echo "<td><input type='checkbox' name='defriendSelected[]' value='$aId'/></td>";
                                 echo "</tr>";
                             }
                         }
@@ -76,10 +114,11 @@
                             foreach($friendRequestsSentAccepted as $b) {
                                 $bId = $b->getFriend_RequesteeId();
                                 $bFriend = userIdExists($bId);
+                                $sharedAlbums = getSharedAlbums($bId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td>".$bFriend->getName()."</td>";
-                                    echo "<td></td>";
-                                    echo "<td></td>";
+                                    echo "<td><a href='FriendPictures.php'>".$bFriend->getName()."</a></td>";
+                                    echo "<td>".count($sharedAlbums)."</td>";
+                                    echo "<td><input type='checkbox' name='defriendSelected[]' value='$bId'/></td>";
                                 echo "</tr>";
                             }
                         }
@@ -92,6 +131,14 @@
                 }
                 ?>
             </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2 offset-sm-8">
+                <button type="submit" name="btnSubmitDefriend" class="btn btn-outline-primary my-2">Defriend Selected</button>
+            </div>
+            
+            
         </div>
     
     </form>
@@ -119,9 +166,10 @@
                         
                         foreach ($friendRequests as $request) {
                             $requester = userIdExists($request->getFriend_RequesterId());
+                            $rId = $requester->getUserId();
                             echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                echo "<td>".$requester->getName()."</th>";
-                                echo "<td></th>";
+                                echo "<td>".$requester->getName()."</td>";
+                                echo "<td><input type='checkbox' name='requestsSelected[]' value='$rId'/></td>";
                             echo "</tr>";
                         }
                         
@@ -136,6 +184,18 @@
                 ?>
             </div>
         </div>
+        
+        <div class="row">
+            <div class="col-sm-2 offset-sm-6">
+                <button type="submit" name="btnSubmitAccept" class="btn btn-outline-primary my-2">Accept Selected</button>
+            </div>
+            
+            <div class="col-sm-2">
+                <button type="submit" name="btnSubmitDeny" class="btn btn-outline-primary my-2">Deny Selected</button>
+            </div>
+        </div>
+            
+        
     
     </form>
     
