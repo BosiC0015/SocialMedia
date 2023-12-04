@@ -8,28 +8,31 @@
     
     if (!isset($_SESSION['user']))
     {
-        header("Location: Index.php");
+        $_SESSION['page'] = "friendPictures";
+        header("Location: Login.php");
         exit();
-    }
-    
-    if(isset($_GET['fId'])) 
-    {
-        $fId = $_GET['fId'];
-        $friendSharingAlbum = userIdExists($fId);
-        $friendName = $friendSharingAlbum->getName();
     }
     
     $user = $_SESSION['user'];
     $uid = $user->getUserId();
     
-    
     $albumErr = "";
     $commentErr = "";
     
-    // get shared albums by user
-    $albumsArr = getSharedAlbums($fId);
+    
+    // get friend's id from query string
+    if(isset($_GET['fid'])) 
+    {
+        $fId = $_GET['fid'];  
+    } else {
+        header("Location: MyFriends.php");
+        exit();
+    }
+
+    // get shared albums from friend
+    $albumsArr = getAlbumsSharedFrom($fId);
     $selectedAId = "";
-    $selectedFriendName = "";
+    $selectedFriendName = userIdExists($fId)->getName();
     $displayPic = null;
     
     // select album
@@ -65,7 +68,7 @@
         
         if (empty($commentErr)) {
             addComment($uid, $pictureId, $commentText);
-            header("Location: FriendPictures.php");
+            header("Location: FriendPictures.php?fid=$fId");
             exit();
         }
     }
@@ -98,8 +101,8 @@
 
 <?php include_once './src/Header.php'; ?>
 <main class="container m-5">
-    <h1 class="text-center"><?php print $friendName . "'s"; ?> Shared Pictures</h1>
-    <form method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>" class="d-flex flex-column align-items-center">
+    <h1 class="text-center"><?php print $selectedFriendName; ?>'s Shared Pictures</h1>
+    <form method="post" action="FriendPictures.php?fid=<?php print $fId; ?>" class="">
         <!--select album part-->
         <div class="col-md-10 mb-3">
             <select name="album" id="album-list" class="form-control">

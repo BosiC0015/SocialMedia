@@ -8,7 +8,8 @@
     
     if (!isset($_SESSION['user']))
     {
-        header("Location: Index.php");
+        $_SESSION['page'] = "myAlbums";
+        header("Location: Login.php");
         exit();
     }
     
@@ -19,7 +20,11 @@
     
     if(isset($_GET['aid'])) 
     {
-        deletePictures($_GET['aid']);
+        $pictures = getPicturesInAlbum($_GET['aid']);
+        foreach ($pictures as $pic) {
+            $pid = $pic->getPictureId();
+            deletePicture($pid);
+        }
         deleteAlbum($_GET['aid']);
         header("Location: MyAlbums.php");
     }

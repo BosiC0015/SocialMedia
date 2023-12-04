@@ -9,7 +9,8 @@
     
     if (!isset($_SESSION['user']))
     {
-        header("Location: Index.php");
+        $_SESSION['page'] = "addFriend";
+        header("Location: Login.php");
         exit();
     }
     

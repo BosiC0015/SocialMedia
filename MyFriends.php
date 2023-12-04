@@ -8,7 +8,8 @@
     
     if (!isset($_SESSION['user']))
     {
-        header("Location: Index.php");
+        $_SESSION['page'] = "myFriends";
+        header("Location: Login.php");
         exit();
     }
     
@@ -102,9 +103,9 @@
                             foreach($friendRequestsReceivedAccepted as $a) {
                                 $aId = $a->getFriend_RequesterId();
                                 $aFriend = userIdExists($aId);
-                                $sharedAlbums = getSharedAlbums($aId);
+                                $sharedAlbums = getAlbumsSharedFrom($aId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fId=".$aId."'>".$aFriend->getName()."</a></th>";
+                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fid=".$aId."'>".$aFriend->getName()."</a></th>";
                                     echo "<td>".count($sharedAlbums)."</td>";
                                     echo "<td><input type='checkbox' name='defriendSelected[]' value='$aId'/></td>";
                                 echo "</tr>";
@@ -115,9 +116,9 @@
                             foreach($friendRequestsSentAccepted as $b) {
                                 $bId = $b->getFriend_RequesteeId();
                                 $bFriend = userIdExists($bId);
-                                $sharedAlbums = getSharedAlbums($bId);
+                                $sharedAlbums = getAlbumsSharedFrom($bId);
                                 echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
-                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fid=".$bId."'>".$aFriend->getName()."</a></th>";
+                                    echo "<td><a href='/SocialMedia/FriendPictures.php?fid=".$bId."'>".$bFriend->getName()."</a></th>";
                                     echo "<td>".count($sharedAlbums)."</td>";
                                     echo "<td><input type='checkbox' name='defriendSelected[]' value='$bId'/></td>";
                                 echo "</tr>";
