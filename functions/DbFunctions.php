@@ -202,43 +202,48 @@ function getPicturesInAlbum($aid) {
     }
 }
 
-function getFriendsList($userId)
+function getFriendRequestsSentAccepted($userId, $status)
 {
     $myPdo = getMyPDO();
     
     $sql1 = "SELECT Friend_RequesteeId FROM Friendship "
-            . "WHERE Friend_RequesterId = :userId AND Status = 'accepted'";
+            . "WHERE Friend_RequesterId = :userId AND Status = :status";
     
     $result1 = $myPdo->prepare($sql1);
-    $result1->execute(['userId' => $userId]);
+    $result1->execute(['userId' => $userId, 'status' => $status]);
     
     $friendList1Arr = array();
     
     foreach ($result1 as $row)
     {
-         $friendList1 = new Friendship($row['Friend_RequesteeId']);
+         $friendList1 = new Friendship($row['Friend_RequesterId'], $row['Friend_RequesteeId'], $row['Status']);
          $friendList1Arr[] = $friendList1;
     }
     
+    return $friendList1Arr;
+      
+}
+
+function getFriendRequestsReceivedAccepted($userId, $status)
+{
+    $myPdo = getMyPDO();
     
-    $sql2 = "SELECT Friend_RequesterId FROM Friendship "
-            . "WHERE Friend_RequesteeId = :userId AND Status = 'accepted'";
+    $sql1 = "SELECT Friend_RequesterId FROM Friendship "
+            . "WHERE Friend_RequesteeId = :userId AND Status = :status";
     
-    $result2 = $myPdo->prepare($sql2);
-    $result2->execute(['userId' => $userId]);
+    $result1 = $myPdo->prepare($sql1);
+    $result1->execute(['userId' => $userId, 'status' => $status]);
     
-    $friendList2Arr = array();
-    foreach ($result2 as $row)
+    $friendList1Arr = array();
+    
+    foreach ($result1 as $row)
     {
-         $friendList2 = new Friendship($row['Friend_RequesterId']);
-         $friendList2Arr[] = $friendList2;
+         $friendList1 = new Friendship($row['Friend_RequesterId'], $row['Friend_RequesteeId'], $row['Status']);
+         $friendList1Arr[] = $friendList1;
     }
     
-    $friendsList = array_merge($friendList1Arr, $friendList2Arr);
-    
-    return $friendsList;
-    
-    
+    return $friendList1Arr;
+      
 }
 
 function getFriendRequestersFor($userId) {
@@ -253,7 +258,7 @@ function getFriendRequestersFor($userId) {
     
     foreach ($result as $row)
     {
-         $friendRequesterList = new Friendship($row['Friend_RequesterId']);
+         $friendRequesterList = new Friendship($row['Friend_RequesterId'], $row['Friend_RequesteeId'], $row['Status']);
          $friendRequesterListArr[] = $friendRequesterList;
     }
     return $friendRequesterListArr;

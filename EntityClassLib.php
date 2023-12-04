@@ -161,16 +161,30 @@ class Comment {
 }
 
 class Friendship {
-    public $FriendsId;
+    public $Friend_RequesterId;
+    public $Friend_RequesteeId;
+    public $Status;
     
-    public function __construct($FriendsId) {
-        $this->FriendsId = $FriendsId;
+    public function __construct($Friend_RequesterId, $Friend_RequesteeId, $Status) {
+        $this->Friend_RequesterId = $Friend_RequesterId;
+        $this->Friend_RequesteeId = $Friend_RequesteeId;
+        $this->Status = $Status;
         
     }
     
-    public function getFriendsId()
+    public function getFriend_RequesterId()
     {
-        return $this->FriendsId;
+        return $this->Friend_RequesterId;
+    }
+    
+    public function getFriend_RequesteeId()
+    {
+        return $this->Friend_RequesteeId;
+    }
+    
+    public function getStatus()
+    {
+        return $this->Status;
     }
     
 }

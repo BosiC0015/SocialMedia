@@ -13,8 +13,15 @@
     }
     
     $user = $_SESSION['user'];
+    $userId = $user->getUserId();
     
-    $friendsList = getFriendsList($user->getUserId());
+    // get list of friends of user
+    $friendsList = array();
+                    
+    $friendRequestsReceivedAccepted = getFriendRequestsReceivedAccepted($user->getUserId(), "accepted");
+    $friendRequestsSentAccepted = getFriendRequestsSentAccepted($user->getUserId(), "accepted");
+     
+    // get list of friend requests
     $friendRequests = getFriendRequestersFor($user->getUserId());
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -29,7 +36,9 @@
 
 <main class="container m-5">
     <h1 class="text-center">My Friends</h1>
-    <p>Welcome <b><?php echo $user->getName() ?></b>! (not you? Change User <a href='Logout.php'>here</a>)</p>
+    <p>Welcome <b><?php echo $user->getName() ?></b>! (not you? Change User <a href='Logout.php'>here</a>)</p>  
+    <p><?php echo "Friend requests received: ".count($friendRequestsReceivedAccepted) ?></p>
+    <p><?php echo "Friend requests sent: ".count($friendRequestsSentAccepted) ?></p>
     
     <form name="formFriendsList" id="formFriendsList" method="post" action="<?php echo $_SERVER['PHP_SELF'] ?>">
         <div class="row">
@@ -44,16 +53,39 @@
         <div class="row">
             <div class="col-sm-10 offset-sm-1">
                 <?php 
-                if (count($friendsList) > 0)
+                if (count($friendRequestsReceivedAccepted) > 0 || count($friendRequestsSentAccepted) > 0)
                 {
-                    echo "<table style='width: 100%; margin-top: 40px; margin-bottom: 40px;'>";
+                    echo "<table style='width: 100%; margin-top: 10px; margin-bottom: 40px;'>";
                         echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
                             echo "<th>Name</th>";
                             echo "<th>Shared Albums</th>";
                             echo "<th>Defriend</th>";
                         echo "</tr>";
                         
+                        if (count($friendRequestsReceivedAccepted) > 0) {
+                            foreach($friendRequestsReceivedAccepted as $a) {
+                                $aId = $a->getFriend_RequesterId();
+                                $aFriend = userIdExists($aId);
+                                echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
+                                    echo "<td>".$aFriend->getName()."</th>";
+                                    echo "<td></td>";
+                                    echo "<td></td>";
+                                echo "</tr>";
+                            }
+                        }
                         
+                        if (count($friendRequestsSentAccepted) > 0) {
+                            foreach($friendRequestsSentAccepted as $b) {
+                                $bId = $b->getFriend_RequesteeId();
+                                $bFriend = userIdExists($bId);
+                                echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
+                                    echo "<td>".$bFriend->getName()."</td>";
+                                    echo "<td></td>";
+                                    echo "<td></td>";
+                                echo "</tr>";
+                            }
+                        }
+           
                     echo "</table>";
                 }
                 else
@@ -88,7 +120,7 @@
                         echo "</tr>";
                         
                         foreach ($friendRequests as $request) {
-                            $requester = userIdExists($request->getFriendsId());
+                            $requester = userIdExists($request->getFriend_RequesterId());
                             echo "<tr style='border-top: 1px solid grey; border-bottom: 1px solid grey; height: 30px;'>";
                                 echo "<td>".$requester->getName()."</th>";
                                 echo "<td></th>";
