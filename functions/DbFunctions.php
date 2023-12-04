@@ -45,17 +45,17 @@ function addUser($uid, $name, $phone, $pw) {
 }
 
 function getUserByIdAndPassword($uid, $pw) {
-        $myPdo = getMyPDO();
-        
-        $sql = "SELECT UserId, Name, Phone FROM user WHERE UserId = :uid AND Password = :pw";
-        $result = $myPdo->prepare($sql);
-        $result->execute(['uid' => $uid, 'pw' => $pw]);
-        $row = $result->fetch(PDO::FETCH_ASSOC);
-        if ($row) {
-            return new User($row['UserId'], $row['Name'], $row['Phone']);
-        }   
-        return null;
-    }
+    $myPdo = getMyPDO();
+
+    $sql = "SELECT UserId, Name, Phone FROM user WHERE UserId = :uid AND Password = :pw";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['uid' => $uid, 'pw' => $pw]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        return new User($row['UserId'], $row['Name'], $row['Phone']);
+    }   
+    return null;
+}
 
 function getAllAccessCodes() {
     $myPdo = getMyPDO();
@@ -334,4 +334,55 @@ function addComment($uid, $pid, $commentText) {
     $sql = "INSERT INTO comment (Author_Id, Picture_Id, Comment_Text) values (:uid, :pid, :text);";
     $statement = $myPdo->prepare($sql);  
     $statement->execute(['uid' => $uid, 'pid' => $pid, 'text' => $commentText]);
+}
+
+function getSharedAlbums($uid) {
+    $myPdo = getMyPDO();
+    
+    $sql = "SELECT 
+                *
+            FROM
+                album
+            WHERE
+                (Owner_Id = (SELECT 
+                        Friend_RequesteeId
+                    FROM
+                        friendship
+                    WHERE
+                        Friend_RequesterId = 'u0004')
+                    OR Owner_Id = (SELECT 
+                        Friend_RequesterId
+                    FROM
+                        friendship
+                    WHERE
+                        Friend_RequesteeId = 'u0004'))
+                    AND Accessibility_Code = 'shared';";
+            
+    $result = $myPdo->prepare($sql);
+    $allAlbums = array();
+    $result->execute(['uid' => $uid]);
+    
+    if ($result) {
+        foreach ($result as $row)
+        {
+            $album = new Album( $row['Album_Id'], $row['Title'], $row['Description'], $row['Owner_Id'], $row['Accessibility_Code']);
+            $allAlbums[] = $album;
+        }
+        return $allAlbums;
+    } else {
+        throw new Exception("Query failed! SQL statement: $sql");
+    }
+}
+
+function getNameByAId($aid) {
+    $myPdo = getMyPDO();
+
+    $sql = "SELECT Name FROM user WHERE UserId = (SELECT Owner_Id FROM album WHERE Album_Id = :aid)";
+    $result = $myPdo->prepare($sql);
+    $result->execute(['aid' => $aid]);
+    $row = $result->fetch(PDO::FETCH_ASSOC);
+    if ($row) {
+        return $row['Name'];
+    }   
+    return null;
 }
