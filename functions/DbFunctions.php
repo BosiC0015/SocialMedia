@@ -200,6 +200,7 @@ function getPicturesInAlbum($aid) {
     } else {
         throw new Exception("Query failed! SQL statement: $sql");
     }
+}
 
 function getFriendsList($userId)
 {
