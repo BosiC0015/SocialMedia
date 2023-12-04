@@ -354,13 +354,13 @@ function getSharedAlbums($uid) {
                     FROM
                         friendship
                     WHERE
-                        Friend_RequesterId = 'u0004')
+                        Friend_RequesterId = :uid)
                     OR Owner_Id = (SELECT 
                         Friend_RequesterId
                     FROM
                         friendship
                     WHERE
-                        Friend_RequesteeId = 'u0004'))
+                        Friend_RequesteeId = :uid))
                     AND Accessibility_Code = 'shared';";
             
     $result = $myPdo->prepare($sql);
@@ -390,4 +390,27 @@ function getNameByAId($aid) {
         return $row['Name'];
     }   
     return null;
+}
+
+function deleteFriend($userId, $friendId) {
+    $myPdo = getMyPDO();
+    
+    $sql = "DELETE FROM Friendship "
+                . "WHERE ((Friend_RequesterId = :userId AND Friend_RequesteeId= :friendId) "
+                . "  OR (Friend_RequesterId = :friendId AND Friend_RequesteeId= :userId)) "
+                . "    AND Status='accepted'";
+    
+    $result = $myPdo->prepare($sql);
+    $result->execute(['userId' => $userId, 'friendId' => $friendId]);
+    
+}
+
+function denyFriendRequest($userId, $requesterId) {
+    $myPdo = getMyPDO();
+    
+    $sql = "DELETE FROME Friendship WHERE Friend_RequesterId = :requesterId AND Friend_RequesteeId = :userId AND Status='request'";
+    
+    $result = $myPdo->prepare($sql);
+    $result->execute(['userId' => $userId, 'requesterId' => $requesterId]);
+    
 }
