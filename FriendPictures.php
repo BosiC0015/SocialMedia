@@ -24,9 +24,10 @@
     if(isset($_GET['fid'])) 
     {
         $fId = $_GET['fid'];  
+        
     } else {
-        header("Location: MyFriends.php");
-        exit();
+        //header("Location: MyFriends.php");
+        //exit();
     }
 
     // get shared albums from friend
@@ -35,21 +36,21 @@
     $selectedFriendName = userIdExists($fId)->getName();
     $displayPic = null;
     
-    // select album
-    if (isset($_SESSION['aid'])) {
-        $selectedAId = $_SESSION['aid'];
+     //select album
+    if (isset($_SESSION['aFid'])) {
+        $selectedAId = $_SESSION['aFid'];
     }
     
     if (isset($_POST['btnAlbum'])) {
-        $_SESSION['displayPic'] = null;
+        $_SESSION['displayFriendPic'] = null;
         $selectedAId = $_POST['album'];
         $albumErr = validateAlbum($selectedAId);
         
         if (empty($albumErr)) {
-            $_SESSION['aid'] = $selectedAId;
+            $_SESSION['aFid'] = $selectedAId;
         }
     } else {
-        $selectedAId = $_SESSION['aid'];
+        $selectedAId = $_SESSION['aFid'];
     }
     
     // get pictures in album
@@ -63,7 +64,7 @@
     // add comment
     if (isset($_POST['btnAddComment'])) {
         $commentText = trim($_POST['comment']);
-        $pictureId = $_SESSION['displayPic']->getPictureId();
+        $pictureId = $_SESSION['displayFriendPic']->getPictureId();
         $commentErr = validateCommentText($commentText);
         
         if (empty($commentErr)) {
@@ -74,25 +75,25 @@
     }
     
     // get large picture to be displayed
-    if (isset($_SESSION['displayPic'])) {
-        $displayPic = $_SESSION['displayPic'];
+    if (isset($_SESSION['displayFriendPic'])) {
+        $displayPic = $_SESSION['displayFriendPic'];
     } else {
         $displayPic = $picturesArr[0];
-        $_SESSION['displayPic'] = $picturesArr[0];
+        $_SESSION['displayFriendPic'] = $picturesArr[0];
     }
     
     if (isset($_POST['btnPic'])) {
-        if (isset($_SESSION['displayPic'])) {
-        $displayPic = $_SESSION['displayPic'];
+        if (isset($_SESSION['displayFriendPic'])) {
+        $displayPic = $_SESSION['displayFriendPic'];
     } else {
         $displayPic = $picturesArr[0];
-        $_SESSION['displayPic'] = $picturesArr[0];
+        $_SESSION['displayFriendPic'] = $picturesArr[0];
     }
         if (isset($_POST['selectedPic'])) {
-            if ($_SESSION['displayPic'] != null) {
+            if ($_SESSION['displayFriendPic'] != null) {
                 $pid = $_POST['selectedPic'];
                 $displayPic = getPictureById($pid);
-                $_SESSION['displayPic'] = $displayPic;
+                $_SESSION['displayFriendPic'] = $displayPic;
             }
         }
     }
@@ -109,13 +110,13 @@
                 <option value="-1">Select Album...</option>
                 <?php
                     foreach ($albumsArr as $album) {
-                        $aid = $album->getAlbumId();
+                        $aFid = $album->getAlbumId();
                         $aTitle = $album->getTitle();
 
-                        if ($aid == $selectedAId) {
-                            print "<option value=\"$aid\" selected>$aTitle</option>";
+                        if ($aFid == $selectedAId) {
+                            print "<option value=\"$aFid\" selected>$aTitle</option>";
                         } else {
-                            print "<option value=\"$aid\">$aTitle</option>";
+                            print "<option value=\"$aFid\">$aTitle</option>";
                         }
                     }
                 ?>

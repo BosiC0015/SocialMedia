@@ -97,8 +97,8 @@
                     <div class="col-md-2">
                         <label class="form-label fw-semibold">Description: </label>
                     </div>
-                    <div class="col-md-4">
-                        <textarea id="txtAreaDescription" name="txtAreaDescription" rows="6" cols="50" class="form-control" value="">
+                    <div class="col-md-4  text-start">
+                        <textarea id="txtAreaDescription" name="txtAreaDescription" rows="6" cols="50" class="form-control text-start" value="">
                             <?php echo  isset($_POST['txtAreaDescription']) ? $_POST['txtAreaDescription'] : '' ?>
                         </textarea>
                     </div>

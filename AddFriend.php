@@ -77,7 +77,7 @@
                     
                     // check if entered ID is already friends with user
                     if (!$statusSet && count($friends) > 0) {
-                        $friendIdErr = $friendIdErr."<br/>DEBUG HERE...";
+                        
                         if (count($friendRequestsReceivedAccepted) > 0) {
                             foreach($friendRequestsReceivedAccepted as $a) {
                                 if (strcmp($a->getFriend_RequesterId(), $fId) == 0) {

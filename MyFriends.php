@@ -14,6 +14,8 @@
     }
     
     $user = $_SESSION['user'];
+    unset($_SESSION['aFid']);
+    unset($_SESSION['displayFriendPic']);
     $userId = $user->getUserId();
     
     // get list of friends of user
@@ -51,7 +53,7 @@
             $requestsSelected = $_POST["requestsSelected"];
             if (count($requestsSelected) > 0) {
                 foreach($requestsSelected as $requestFriendId) {
-                    denyFriendRequest($userId, $requestFriendId);
+                    denyFriendRequest($requestFriendId, $userId);
                 }
                 
             }

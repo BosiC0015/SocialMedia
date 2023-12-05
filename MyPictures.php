@@ -25,8 +25,8 @@
         $selectedAId = $_GET['aid'];
         $_SESSION['aid'] = $_GET['aid'];
     } else {
-        header("Location: MyAlbums.php");
-        exit();
+        //header("Location: MyPictures.php");
+        //exit();
     }
     
     // get albums by user

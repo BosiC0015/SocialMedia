@@ -393,12 +393,12 @@ function deleteFriend($userId, $friendId) {
     
 }
 
-function denyFriendRequest($userId, $requesterId) {
+function denyFriendRequest($requesterId, $userId) {
     $myPdo = getMyPDO();
     
-    $sql = "DELETE FROME Friendship WHERE Friend_RequesterId = :requesterId AND Friend_RequesteeId = :userId AND Status='request'";
+    $sql = "DELETE FROM Friendship WHERE Friend_RequesterId = :requesterId AND Friend_RequesteeId = :userId AND Status='request'";
     
     $result = $myPdo->prepare($sql);
-    $result->execute(['userId' => $userId, 'requesterId' => $requesterId]);
+    $result->execute(['requesterId' => $requesterId, 'userId' => $userId]);
     
 }
