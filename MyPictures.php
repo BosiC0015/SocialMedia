@@ -25,8 +25,8 @@
         $selectedAId = $_GET['aid'];
         $_SESSION['aid'] = $_GET['aid'];
     } else {
-        //header("Location: MyPictures.php");
-        //exit();
+        header("Location: MyAlbums.php");
+        exit();
     }
     
     // get albums by user
@@ -138,7 +138,7 @@
                         print <<<image
                             <h3 class="text-center">$displayTitle</h3>
                             <div class="d-flex flex-row">
-                                <div class="col-md-9">
+                                <div class="col-md-8">
                                     <img src="./images/$displayFileName" alt="$displayTitle" class="mw-100 mh-100" />
                                     <!--thumbnails-->
                                     <div class="d-flex align-items-center overflow-x-auto" id="thumbnails">
@@ -170,7 +170,7 @@
                         print <<<closing
                                     </div>
                                 </div>
-                                <div class="col-md-2 offset-1">
+                                <div class="col-md-4 offset-1">
                                     <h5>Description: </h5>
                                     <p>$displayDesc</p>
                                     <h5>Comments: </h5>
